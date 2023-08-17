@@ -1,80 +1,74 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { editNote, deleteNote } from './noteSlice';
-// import DisplayNote from './displayNote';
+import { useUpdateNoteMutation, useDeleteNoteMutation } from './api/apiSlice';
 
 function SingleNote({ note }) {
-    const dispatch = useDispatch();
+    const [updateNoteMutation] = useUpdateNoteMutation();
+    const [deleteNoteMutation] = useDeleteNoteMutation();
 
-    const [editMode, setEditMode] = useState(null);
+    const [editMode, setEditMode] = useState(false);
     const [editedText, setEditedText] = useState('');
-    const [deleteMode, setDeleteMode] = useState(null);
 
-    const handleEditNote = (id, text) => {
-        setEditMode(id);
-        setEditedText(text);
+    const handleEditNote = () => {
+        setEditMode(true);
+        setEditedText(note.text);
     };
 
-    const handleSaveEdit = (id) => {
-        console.log(id);
-        dispatch(editNote({ id, text: editedText }));
-        console.log(editNote);
-        setEditMode(null);
-        setEditedText('');
+    const handleSaveEdit = async () => {
+        updateNoteMutation({ id: note.id, text: editedText });
+        setEditMode(false);
+        window.location.reload();
     };
 
-    const handleDeleteNote = (id) => {
-        console.log(id);
-        setDeleteMode(id);
+    const handleDeleteNote = async () => {
+        deleteNoteMutation({ id: note.id });
+        window.location.reload();
     }
 
-    // const handleDeleteNote = (id) => {
-    //     dispatch(deleteNote(id)); // Passing the id as the payload to the deleteNote action
-    // };
     return (
-    editMode === note.id ? (
-            <div className='lists'>
-              <textarea
-                type="text"
-                value={editedText}
-                onChange={e => setEditedText(e.target.value)}
-              />
-              <button onClick={() => handleSaveEdit(note.id)}>Save</button>
-            </div>
-          ) : deleteMode !== note.id ? (
-            <div className='lists'>
-                
-              <span className='todo'>{note.text}</span>
-              <button
-                onClick={() => handleEditNote(note.id, note.text)}
-                style={{
-                  borderRadius: 25,
-                  padding: 10,
-                  border: "1px solid white",
-                  color: "rgb(65, 27, 27)",
-                  backgroundColor: "antiquewhite",
-                  margin: 5,
-                }}
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDeleteNote(note.id)}
-                style={{
-                  borderRadius: 25,
-                  padding: 10,
-                  border: "1px solid white",
-                  color: "rgb(65, 27, 27)",
-                  backgroundColor: "antiquewhite",
-                  margin: 5,
-                }}
-              >
-                Delete
-              </button>
-            </div>
-            // <DisplayNote note={note}/>
-          ) : null
+        <div className='lists'>
+            {editMode ? (
+                <>
+                    <textarea
+                        type="text"
+                        value={editedText}
+                        onChange={e => setEditedText(e.target.value)}
+                    />
+                    <button onClick={handleSaveEdit}>Save</button>
+                </>
+            ) : (
+                <>
+                    <span className='todo'>{note.text}</span>
+                    <button
+                        onClick={handleEditNote}
+                        style={{
+                            borderRadius: 25,
+                            padding: 10,
+                            border: "1px solid white",
+                            color: "rgb(65, 27, 27)",
+                            backgroundColor: "antiquewhite",
+                            margin: 5,
+                        }}
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={handleDeleteNote}
+                        style={{
+                            borderRadius: 25,
+                            padding: 10,
+                            border: "1px solid white",
+                            color: "rgb(65, 27, 27)",
+                            backgroundColor: "antiquewhite",
+                            margin: 5,
+                        }}
+                    >
+                        Delete
+                    </button>
+                </>
+            )}
+        </div>
     );
 }
 
 export default SingleNote;
+

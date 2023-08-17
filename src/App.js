@@ -1,17 +1,17 @@
 import './App.css';
 import NoteApp from './features/Note';
-import { addNote } from './features/noteSlice';
-import { useDispatch } from 'react-redux';
 import { useState } from 'react';
+import { useAddNoteMutation } from './features/api/apiSlice';
 
 function App() {
-  const dispatch = useDispatch();
   const[note, setNote] = useState();
+  const[addNote] = useAddNoteMutation();
 
   const handleAddNote = (e) => {
     e.preventDefault(); 
-    dispatch(addNote({ text: note })); 
+    addNote({ text: note});
     setNote(''); 
+    window.location.reload();
   };
 
   return (

@@ -1,4 +1,3 @@
-// noteSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const noteSlice = createSlice({
@@ -10,10 +9,9 @@ const noteSlice = createSlice({
     },
     editNote: (state, action) => {
       const { id, text } = action.payload;
-      console.log(id, text);
-      const note = state.find(note => note.id === id);
-      if (note) {
-        note.text = text;
+      const noteToEdit = state.find(note => note.id === id);
+      if (noteToEdit) {
+        noteToEdit.text = text;
       }
     },
     deleteNote: (state, action) => {
